@@ -1,42 +1,68 @@
-from fastapi import FastAPI
-from datetime import datetime
+from fastapi import FastAPI, UploadFile, File
+import shutil
 
-app = FastAPI(
-    title="AI Cloud Log Analyzer",
-    description="A cloud-native application to collect, analyze, and summarize Linux logs using AWS and AI.",
-    version="1.0.0"
-)
+from backend.s3_upload import upload_log
+from ai.bedrock_summary import summarize_logs
+
+
+app = FastAPI()
 
 
 @app.get("/")
 def home():
+
     return {
-        "message": "Welcome to AI Cloud Log Analyzer",
-        "status": "Running",
-        "version": "1.0.0"
+        "message":
+        "AI Cloud Log Analyzer Running"
     }
 
 
-@app.get("/health")
-def health():
-    return {
-        "status": "Healthy",
-        "server_time": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    }
+
+@app.post("/analyze")
+async def analyze_log(
+    file: UploadFile = File(...)
+):
+
+    file_location = (
+        f"logs/{file.filename}"
+    )
 
 
-@app.get("/project")
-def project():
+    with open(
+        file_location,
+        "wb"
+    ) as buffer:
+
+        shutil.copyfileobj(
+            file.file,
+            buffer
+        )
+
+
+    upload_result = upload_to_s3(
+        file_location
+    )
+
+
+    with open(
+        file_location,
+        "r"
+    ) as log_file:
+
+        logs = log_file.read()
+
+
+
+    ai_result = summarize_logs(
+        logs
+    )
+
+
     return {
-        "project": "AI Cloud Log Analyzer",
-        "developer": "Rakshith Kumar",
-        "features": [
-            "Linux Log Collection",
-            "Amazon S3 Upload",
-            "AWS Lambda",
-            "CloudWatch Integration",
-            "Amazon Bedrock AI Analysis",
-            "FastAPI REST API",
-            "Dashboard"
-        ]
+
+        "s3_status":
+        upload_result,
+
+        "ai_summary":
+        ai_result
     }
