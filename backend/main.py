@@ -1,12 +1,19 @@
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI, UploadFile, File
 import shutil
 
 from backend.s3_upload import upload_log
 from ai.bedrock_summary import summarize_logs
 
-
 app = FastAPI()
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/")
 def home():
@@ -18,51 +25,27 @@ def home():
 
 
 
-@app.post("/analyze")
-async def analyze_log(
+@app.post("/upload")
+async def upload_log(
     file: UploadFile = File(...)
 ):
 
-    file_location = (
-        f"logs/{file.filename}"
-    )
+    try:
+        contents = await file.read()
+        upload_to_s3(contents, file.filename)
+        log_text = contents.decode("utf-8")
+        summary = summarize_logs(log_text)
+
+        return {
+            "message": "Upload Successful",
+            "filename": file.filename,
+            "summary": summary
+        }
+
+    except Exception as e:
+        return {
+            "status": "error",
+            "message": str(e)
+        }
 
 
-    with open(
-        file_location,
-        "wb"
-    ) as buffer:
-
-        shutil.copyfileobj(
-            file.file,
-            buffer
-        )
-
-
-    upload_result = upload_to_s3(
-        file_location
-    )
-
-
-    with open(
-        file_location,
-        "r"
-    ) as log_file:
-
-        logs = log_file.read()
-
-
-
-    ai_result = summarize_logs(
-        logs
-    )
-
-
-    return {
-
-        "s3_status":
-        upload_result,
-
-        "ai_summary":
-        ai_result
-    }

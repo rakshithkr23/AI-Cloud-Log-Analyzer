@@ -1,44 +1,69 @@
 import json
-from pathlib import Path
+import re
 
 
-LOG_FILE = Path("data/sample.log")
-OUTPUT_FILE = Path("logs/parsed_logs.json")
+INPUT_FILE = "data/sample.log"
+OUTPUT_FILE = "logs/parsed_logs.json"
+
+
+def detect_level(message):
+
+    message = message.lower()
+
+    if "failed" in message or "error" in message:
+        return "ERROR"
+
+    elif "critical" in message or "fatal" in message:
+        return "CRITICAL"
+
+    elif "warning" in message:
+        return "WARNING"
+
+    else:
+        return "INFO"
+
 
 
 def parse_logs():
-    parsed_logs = []
 
-    if not LOG_FILE.exists():
-        print(f"Log file not found: {LOG_FILE}")
-        return
+    logs = []
 
-    with open(LOG_FILE, "r") as file:
+
+    with open(INPUT_FILE,"r") as file:
+
         for line in file:
-            line = line.strip()
 
-            if not line:
-                continue
+            level = detect_level(line)
 
-            parts = line.split()
 
             log = {
-                "date": parts[0],
-                "time": parts[1],
-                "level": parts[2],
-                "message": " ".join(parts[3:])
+
+                "level": level,
+
+                "message": line.strip()
+
             }
 
-            parsed_logs.append(log)
 
-    OUTPUT_FILE.parent.mkdir(exist_ok=True)
-
-    with open(OUTPUT_FILE, "w") as output:
-        json.dump(parsed_logs, output, indent=4)
-
-    print(f"Successfully parsed {len(parsed_logs)} log entries.")
-    print(f"Output saved to {OUTPUT_FILE}")
+            logs.append(log)
 
 
-if __name__ == "__main__":
+
+    with open(
+        OUTPUT_FILE,
+        "w"
+    ) as json_file:
+
+        json.dump(
+            logs,
+            json_file,
+            indent=4
+        )
+
+
+    print("Log parsing completed")
+
+
+
+if __name__=="__main__":
     parse_logs()

@@ -1,44 +1,48 @@
 import boto3
-import json
-
-
-bedrock = boto3.client(
-    "bedrock-runtime",
-    region_name="eu-north-1"
-)
 
 
 def summarize_logs(log_text):
+    """
+    Sends log data to Amazon Bedrock and returns an AI-generated summary.
+    """
 
-    prompt = f"""
-You are a Linux system administrator.
+    client = boto3.client(
+        "bedrock-runtime",
+        region_name="eu-north-1"
+    )
 
-Analyze these logs:
-
-{log_text}
-
-Give:
-1. Error explanation
-2. Root cause
-3. Solution
-"""
-
-
-    response = bedrock.invoke_model(
-        modelId="anthropic.claude-opus-5",
-        body=json.dumps(
+    response = client.converse(
+        modelId="openai.gpt-5.6-terra",
+        messages=[
             {
-                "prompt": prompt,
-                "max_tokens_to_sample":500
+                "role": "user",
+                "content": [
+                    {
+                        "text": f"""
+You are a Linux System Administrator.
+
+Analyze the following Linux log file.
+
+Return:
+1. Critical Errors
+2. Warnings
+3. Possible Cause
+4. Suggested Fix
+5. Overall Summary
+
+Logs:
+{log_text}
+"""
+                    }
+                ]
             }
-        )
+        ],
+        inferenceConfig={
+            "maxTokens": 500,
+            "temperature": 0.3
+        }
     )
 
+    summary = response["output"]["message"]["content"][0]["text"]
 
-    result = json.loads(
-        response["body"].read()
-    )
-
-
-    return result
-
+    return summary

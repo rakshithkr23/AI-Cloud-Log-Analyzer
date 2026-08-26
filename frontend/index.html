@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Cloud Log Analyzer</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+
+        <h1>AI Cloud Log Analyzer</h1>
+
+        <p>Upload a Linux log file and let AI analyze it.</p>
+
+        <input type="file" id="logFile">
+
+        <br><br>
+
+        <button onclick="uploadLog()">
+            Analyze Logs
+        </button>
+
+        <hr>
+
+        <h2>AI Summary</h2>
+
+        <pre id="summary">
+No analysis yet...
+        </pre>
+
+    </div>
+
+    <script src="script.js"></script>
+
+</body>
+</html>

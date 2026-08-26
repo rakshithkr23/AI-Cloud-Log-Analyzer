@@ -1,32 +1,22 @@
 [
     {
-        "date": "2026-08-24",
-        "time": "10:15:22",
         "level": "INFO",
-        "message": "User login successful"
+        "message": "2026-08-24 10:15:22 INFO User login successful"
     },
     {
-        "date": "2026-08-24",
-        "time": "10:15:25",
         "level": "WARNING",
-        "message": "CPU usage 82%"
+        "message": "2026-08-24 10:15:25 WARNING CPU usage 82%"
     },
     {
-        "date": "2026-08-24",
-        "time": "10:15:40",
         "level": "ERROR",
-        "message": "Database connection timeout"
+        "message": "2026-08-24 10:15:40 ERROR Database connection timeout"
     },
     {
-        "date": "2026-08-24",
-        "time": "10:16:02",
         "level": "INFO",
-        "message": "Backup started"
+        "message": "2026-08-24 10:16:02 INFO Backup started"
     },
     {
-        "date": "2026-08-24",
-        "time": "10:16:15",
         "level": "ERROR",
-        "message": "Disk space critically low"
+        "message": "2026-08-24 10:16:15 ERROR Disk space critically low"
     }
 ]
