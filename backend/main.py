@@ -2,7 +2,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI, UploadFile, File
 import shutil
 
-from backend.s3_upload import upload_log
+from backend.s3_upload import upload_to_s3
 from ai.bedrock_summary import summarize_logs
 
 app = FastAPI()
@@ -12,8 +12,7 @@ app.add_middleware(
     allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
-    allow_headers=["*"],
-)
+    allow_headers=["*"],)
 
 @app.get("/")
 def home():
@@ -23,12 +22,9 @@ def home():
         "AI Cloud Log Analyzer Running"
     }
 
-
-
 @app.post("/upload")
 async def upload_log(
-    file: UploadFile = File(...)
-):
+    file: UploadFile = File(...)):
 
     try:
         contents = await file.read()
@@ -44,8 +40,8 @@ async def upload_log(
 
     except Exception as e:
         return {
-            "status": "error",
-            "message": str(e)
+                "message" : "Upload Failed",
+                "error" : str(e)
         }
 
 

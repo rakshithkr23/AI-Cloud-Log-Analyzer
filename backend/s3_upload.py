@@ -6,18 +6,16 @@ s3 = boto3.client(
         )
 BUCKET_NAME = "ai-cloud-log-analyzer" 
 
-def upload_log(file_path):
-    bucket_name = "ai-cloud-log-analyzer"
-    object_name = "parsed_logs.json"
-
-    s3.upload_file(
-            file_path,
-            BUCKET_NAME,
-            "uploaded_logs.json"
+def upload_to_s3(file_content,filename):
+    """ Upload file bytes to Amazon s3 """
+    s3.put_object(
+            Bucket = BUCKET_NAME,
+            Key=filename,
+            Body=file_content
             )
-    return "upload completed" 
 
-if __name__ == "__main__":
-    upload_log(
-            "logs/parsed_logs.json"
-            )
+    return {
+            "status" : "success",
+            "message" : f"{filename} uploaded successfully."
+            }
+

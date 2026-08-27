@@ -12,7 +12,7 @@ def summarize_logs(log_text):
     )
 
     response = client.converse(
-        modelId="openai.gpt-5.6-terra",
+            modelId="eu.amazon.nova-2-lite-v1:0",
         messages=[
             {
                 "role": "user",
