@@ -12,7 +12,7 @@ def summarize_logs(log_text):
     )
 
     response = client.converse(
-            modelId="eu.amazon.nova-2-lite-v1:0",
+            modelId="global.amazon.nova-2-lite-v1:0",
         messages=[
             {
                 "role": "user",
