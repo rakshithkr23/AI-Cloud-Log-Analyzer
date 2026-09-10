@@ -1,13 +1,10 @@
-import os
 import boto3
 from datetime import datetime
-from dotenv import load_dotenv
 
-load_dotenv()
 
 dynamodb = boto3.resource(
     "dynamodb",
-    region_name=os.getenv("AWS_REGION")
+    region_name="eu-north-1"
 )
 
 
@@ -60,15 +57,11 @@ def get_log_by_id(log_id):
 
 def get_high_severity_logs():
 
-    response = table.scan(  FilterExpression="level = :level",
-    ExpressionAttributeValues={
-        ":level": "HIGH"
-    }
-                          )
+    response = table.scan()
 
     logs = response.get("Items", [])
 
     return [
-            log for log in logs
+        log for log in logs
         if log.get("severity") == "HIGH"
     ]
